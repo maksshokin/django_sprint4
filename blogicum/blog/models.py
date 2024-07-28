@@ -5,6 +5,7 @@ from django.urls import reverse
 User = get_user_model()
 
 
+
 class PublishedModel(models.Model):
     is_published = models.BooleanField(
         'Опубликовано',

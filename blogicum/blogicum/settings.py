@@ -7,7 +7,7 @@ SECRET_KEY = 'django-insecure-5td!=x^r7skb+4))m+8%s*k+k91ny)v63@2=b&*rh^4=(076-&
 
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -103,3 +103,5 @@ POST_COUNT = 5
 
 LOGIN_REDIRECT_URL = 'blog:index'
 LOGIN_URL = 'login'
+
+CSRF_FAILURE_VIEW = 'pages.views.csrf_failure'
