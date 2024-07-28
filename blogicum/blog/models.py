@@ -5,7 +5,6 @@ from django.urls import reverse
 User = get_user_model()
 
 
-
 class PublishedModel(models.Model):
     is_published = models.BooleanField(
         'Опубликовано',
@@ -90,9 +89,10 @@ class Post(PublishedModel):
 
     def __str__(self):
         return self.title
-    
+
     def get_absolute_url(self):
         return reverse('blog:post_detail', args=(self.pk,))
+
 
 class Comment(PublishedModel):
     author = models.ForeignKey(
@@ -113,8 +113,6 @@ class Comment(PublishedModel):
         verbose_name = 'комментарий'
         verbose_name_plural = 'Комментарий'
         ordering = ('created_at',)
-    
+
     def __str__(self):
         return self.text[:30]
-
-    

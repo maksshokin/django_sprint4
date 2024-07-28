@@ -11,7 +11,6 @@ class CreateUpdateView(
     ProcessFormView
 ):
 
-
     def get_object(self, queryset=None):
         pk = self.kwargs.get("pk")
         if pk is not None:
