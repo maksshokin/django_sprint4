@@ -213,7 +213,6 @@ class CommentMixin:
 
 class CommentCreateView(LoginRequiredMixin, CommentMixin, CreateView):
     def get_success_url(self):
-        print(self.kwargs)
         return reverse(POST_DETAIL_URL, kwargs=self.kwargs)
 
 
