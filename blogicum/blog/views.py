@@ -145,11 +145,6 @@ class UserProfileView(ListingMixin, ListView):
 
 
 class UserEditProfileView(LoginRequiredMixin, UpdateView):
-    """Не смог самостоятельно решить проблему:
-    при заход на страницу профиля выдает ошибку
-    NoReverseMatch at....
-    Но при по ссылке edit_profile/<pk> все работает
-    """
 
     model = User
     template_name = "blog/user.html"
@@ -218,7 +213,8 @@ class CommentMixin:
 
 class CommentCreateView(LoginRequiredMixin, CommentMixin, CreateView):
     def get_success_url(self):
-        return reverse(INDEX_URL)
+        print(self.kwargs)
+        return reverse(POST_DETAIL_URL, kwargs=self.kwargs)
 
 
 class CommentUpdateView(LoginRequiredMixin, CommentMixin, UpdateView):
