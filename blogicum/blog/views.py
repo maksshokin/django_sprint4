@@ -150,7 +150,7 @@ class UserEditProfileView(LoginRequiredMixin, UpdateView):
     NoReverseMatch at....
     Но при по ссылке edit_profile/<pk> все работает
     """
-    
+
     model = User
     template_name = "blog/user.html"
     fields = ["first_name", "last_name", "username", "email"]
