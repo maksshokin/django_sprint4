@@ -112,7 +112,6 @@ class CategoryListView(ListingMixin, ListView):
         )
 
     def get_context_data(self, *, object_list=None, **kwargs):
-        """Добавляет выбранную категорию в контекст."""
         context = super().get_context_data(**kwargs)
         context["category"] = get_object_or_404(
             Category, slug=self.kwargs["category_slug"], is_published=True
@@ -149,7 +148,7 @@ class UserEditProfileView(LoginRequiredMixin, UpdateView):
 
     model = User
     template_name = "blog/user.html"
-    fields = ["first_name", "last_name", "username", "email", "about_me"]
+    fields = ["first_name", "last_name", "username", "email"]
 
     def get_queryset(self):
         return super().get_queryset().filter(id=self.kwargs["pk"])
@@ -212,12 +211,9 @@ class CommentMixin:
         return super().dispatch(request, *args, **kwargs)
 
 
-class CommentCreateView(LoginRequiredMixin, CommentMixin, CreateView):
-
+class CommentCreateView(LoginRequiredMixin, CommentMixin, CreateView):    
     def get_success_url(self):
-        post = get_object_or_404(Post, id=self.kwargs["post_id"])
-        return reverse(POST_DETAIL_URL, kwargs={"pk": post.pk})
-
+        return reverse(INDEX_URL)
 
 class CommentUpdateView(LoginRequiredMixin, CommentMixin, UpdateView):
 

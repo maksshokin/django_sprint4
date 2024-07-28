@@ -116,4 +116,5 @@ class Comment(PublishedModel):
     
     def __str__(self):
         return self.text[:30]
+
     

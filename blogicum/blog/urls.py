@@ -2,12 +2,14 @@ from django.urls import path
 
 from . import views
 
-app_name = 'blog'
+app_name: str = "blog"
 
 urlpatterns: list = [
     path("", views.PostListView.as_view(), name="index"),
     path(
-        "posts/<int:pk>/", views.PostDetailView.as_view(), name="post_detail"
+        "posts/<int:pk>/",
+        views.PostDetailView.as_view(),
+        name="post_detail"
     ),
     path(
         "category/<slug:category_slug>/",
@@ -15,7 +17,9 @@ urlpatterns: list = [
         name="category_posts",
     ),
     path(
-        "posts/create/", views.PostCreateEditView.as_view(), name="create_post"
+        "posts/create/",
+        views.PostCreateEditView.as_view(),
+        name="create_post"
     ),
     path(
         "posts/<int:pk>/edit/",
@@ -23,7 +27,9 @@ urlpatterns: list = [
         name="edit_post",
     ),
     path(
-        "profile/<username>/", views.UserProfileView.as_view(), name="profile"
+        "profile/<username>/",
+        views.UserProfileView.as_view(),
+        name="profile"
     ),
     path(
         "edit_profile/<int:pk>/",
