@@ -21,6 +21,7 @@ class CommentForm(forms.ModelForm):
         model = Comment
         fields = ("text",)
 
+
 class UserEditForm(forms.ModelForm):
 
     class Meta:
