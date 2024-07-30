@@ -3,7 +3,7 @@ from django.shortcuts import get_object_or_404, redirect
 
 from blog.models import Comment, Post
 from .forms import CommentForm
-from .constants import INDEX, POST_DETAIL_URL
+from .constants import INDEX, PAGINATE, POST_DETAIL_URL
 
 from django.core.exceptions import PermissionDenied
 
@@ -50,3 +50,10 @@ class CommentMixin:
             if request.user.id != comment_to_change.author.id:
                 raise PermissionDenied
         return super().dispatch(request, *args, **kwargs)
+
+
+class ListingMixin:
+
+    model = Post
+    ordering = "-pub_date"
+    paginate_by = PAGINATE

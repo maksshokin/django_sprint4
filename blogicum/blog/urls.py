@@ -32,7 +32,7 @@ urlpatterns: list = [
         name="profile"
     ),
     path(
-        "edit_profile/<int:pk>/",
+        "edit_profile/",
         views.UserEditProfileView.as_view(),
         name="edit_profile",
     ),

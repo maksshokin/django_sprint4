@@ -3,7 +3,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Count
 from django.shortcuts import get_object_or_404, redirect
-from django.urls import reverse
+from django.urls import reverse, reverse_lazy
 from django.utils import timezone
 from django.views.generic import (
     CreateView,
@@ -13,19 +13,16 @@ from django.views.generic import (
     UpdateView,
 )
 
-from blog.models import Category, Post
-from blog.mixins import CommentMixin, PostFieldsMixin
+from blog.models import Category, Post, User
+from blog.mixins import CommentMixin, ListingMixin, PostFieldsMixin
 
-from .forms import CommentForm, PostForm
+from .forms import CommentForm, PostForm, UserEditForm
 from .utils import CreateUpdateView
 
 from .constants import (
     POST_DETAIL_URL,
-    PROFILE_URL,
-    PAGINATE
+    PROFILE_URL
 )
-
-User = get_user_model()
 
 
 class PostCreateEditView(
@@ -58,13 +55,6 @@ class PostDeleteView(LoginRequiredMixin, PostFieldsMixin, DeleteView):
         context = super().get_context_data(**kwargs)
         context["form"] = PostForm()
         return context
-
-
-class ListingMixin:
-
-    model = Post
-    ordering = "-pub_date"
-    paginate_by = PAGINATE
 
 
 class PostListView(ListingMixin, ListView):
@@ -128,17 +118,21 @@ class UserProfileView(ListingMixin, ListView):
 
 
 class UserEditProfileView(LoginRequiredMixin, UpdateView):
-
     model = User
     template_name = "blog/user.html"
-    fields = ["first_name", "last_name", "username", "email"]
+    form_class = UserEditForm
 
-    def get_queryset(self):
-        return super().get_queryset().filter(id=self.kwargs["pk"])
+    def get_object(self, queryset=None):
+        return self.request.user
 
-    def get_success_url(self, *args, **kwargs):
-        username = get_object_or_404(User, id=self.kwargs["pk"]).username
-        return reverse(PROFILE_URL, args=[username])
+    def form_valid(self, form):
+        form.instance.author = self.request.user
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse_lazy(
+            'blog:profile',
+            kwargs={'username': self.request.user.username})
 
 
 class PostDetailView(DetailView):
