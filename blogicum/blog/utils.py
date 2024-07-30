@@ -19,8 +19,8 @@ class CreateUpdateView(
 
     def get(self, request, *args, **kwargs):
         self.object = self.get_object()
-        return super(CreateUpdateView, self).get(request, *args, **kwargs)
+        return super().get(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
         self.object = self.get_object()
-        return super(CreateUpdateView, self).post(request, *args, **kwargs)
+        return super().post(request, *args, **kwargs)

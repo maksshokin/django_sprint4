@@ -1,8 +1,13 @@
 from django.db import models
+
+
 from django.contrib.auth import get_user_model
 from django.urls import reverse
 
+from .constants import RESTRICTION
+
 User = get_user_model()
+
 
 
 class PublishedModel(models.Model):
@@ -39,14 +44,14 @@ class Category(PublishedModel):
         verbose_name = 'категория'
 
     def __str__(self):
-        return self.title
+        return self.title[:RESTRICTION]
 
 
 class Location(PublishedModel):
     name = models.CharField('Название места', max_length=256)
 
     def __str__(self):
-        return self.name
+        return self.name[:RESTRICTION]
 
     class Meta(PublishedModel.Meta):
         verbose_name_plural = 'Местоположения'
@@ -115,4 +120,4 @@ class Comment(PublishedModel):
         ordering = ('created_at',)
 
     def __str__(self):
-        return self.text[:30]
+        return self.text[:RESTRICTION]

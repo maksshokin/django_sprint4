@@ -6,7 +6,6 @@ from django.urls import include, path, reverse_lazy
 from django.views.generic import CreateView
 
 urlpatterns: list = [
-    path("", include("blog.urls", namespace="blog")),
     path(
         "auth/registration/",
         CreateView.as_view(
@@ -19,7 +18,11 @@ urlpatterns: list = [
     path("auth/", include("django.contrib.auth.urls")),
     path("pages/", include("pages.urls", namespace="pages")),
     path("admin/", admin.site.urls),
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    path("", include("blog.urls", namespace="blog")),
+]
+
+if settings.DEBUG:
+    urlpatterns+=static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 handler403 = 'pages.views.csrf_failure'
 handler404 = 'pages.views.page_not_found'
