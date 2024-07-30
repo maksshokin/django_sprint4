@@ -9,7 +9,6 @@ from .constants import RESTRICTION
 User = get_user_model()
 
 
-
 class PublishedModel(models.Model):
     is_published = models.BooleanField(
         'Опубликовано',

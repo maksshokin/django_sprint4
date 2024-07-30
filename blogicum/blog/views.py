@@ -53,7 +53,7 @@ class PostDeleteView(LoginRequiredMixin, PostFieldsMixin, DeleteView):
 
     def dispatch(self, request, *args, **kwargs):
         return self.check_if_user_is_author(request, *args, **kwargs)
-    
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["form"] = PostForm()
@@ -105,6 +105,9 @@ class CategoryListView(ListingMixin, ListView):
 class UserProfileView(ListingMixin, ListView):
 
     template_name = "blog/profile.html"
+    queryset = Post.objects.select_related('author').annotate(
+        comment_count=Count('comments')
+    )
 
     def get_queryset(self):
         author = get_object_or_404(User, username=self.kwargs["username"])

@@ -1,12 +1,12 @@
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect
-from django.urls import reverse_lazy
 
 from blog.models import Comment, Post
 from .forms import CommentForm
 from .constants import INDEX, POST_DETAIL_URL
 
 from django.core.exceptions import PermissionDenied
+
 
 class PostFieldsMixin:
 
