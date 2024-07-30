@@ -2,6 +2,7 @@ from django.contrib.auth import get_user_model
 
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Count
+from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse, reverse_lazy
 from django.utils import timezone
@@ -140,20 +141,26 @@ class PostDetailView(DetailView):
     model = Post
     template_name = "blog/detail.html"
 
-    def get_queryset(self):
-        queryset = super().get_queryset()
-        author = get_object_or_404(Post, id=self.kwargs["pk"]).author
-        if self.request.user.id != author.id:
-            queryset = queryset.filter(
-                is_published=True, category__is_published=True
-            ).filter(pub_date__lte=timezone.now())
-        return queryset
-
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["form"] = CommentForm()
-        context["comments"] = self.object.comments.select_related("post")
+        context['form'] = CommentForm(instance=self.object)
+        context['comments'] = (
+            self.object.comments.all().select_related('author')
+        )
         return context
+
+    def get_object(self, queryset=None):
+        post = super().get_object(queryset=queryset)
+        if (
+            post.author != self.request.user
+            and (
+                not post.is_published
+                or not post.category.is_published
+                or post.pub_date > timezone.now()
+            )
+        ):
+            raise Http404()
+        return post
 
 
 class CommentCreateView(LoginRequiredMixin, CommentMixin, CreateView):
