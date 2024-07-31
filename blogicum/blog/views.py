@@ -164,6 +164,14 @@ class PostDetailView(DetailView):
 
 
 class CommentCreateView(LoginRequiredMixin, CommentMixin, CreateView):
+    def form_valid(self, form):
+        post = get_object_or_404(
+            Post, id=self.kwargs.get("post_id") or self.kwargs["pk"]
+        )
+        form.instance.author = self.request.user
+        form.instance.post = post
+        return super().form_valid(form)
+    
     def get_success_url(self):
         return reverse(POST_DETAIL_URL, kwargs=self.kwargs)
 
