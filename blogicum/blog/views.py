@@ -1,8 +1,8 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Count
 from django.http import Http404
-from django.shortcuts import get_object_or_404, redirect
-from django.urls import reverse, reverse_lazy
+from django.shortcuts import get_object_or_404
+from django.urls import reverse
 from django.utils import timezone
 from django.views.generic import (
     CreateView,
@@ -18,7 +18,7 @@ from blog.mixins import (
     ListingMixin,
     PostEditDispatchMixin,
     PostFieldsMixin
-)  
+)
 from blog.forms import CommentForm, PostForm, UserEditForm
 from blog.utils import CreateUpdateView
 from blog.constants import (
@@ -38,7 +38,7 @@ class PostCreateEditView(
     def form_valid(self, form):
         form.instance.author = self.request.user
         return super().form_valid(form)
-                                  
+                          
     def get_success_url(self, *args, **kwargs):
         return reverse(PROFILE_URL, args=[self.request.user.username])
 
@@ -48,7 +48,7 @@ class PostDeleteView(
     PostFieldsMixin,
     PostEditDispatchMixin,
     DeleteView
-    ):
+):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -99,7 +99,7 @@ class CategoryListView(ListingMixin, ListView):
 class UserProfileView(ListingMixin, ListView):
 
     template_name = "blog/profile.html"
-    
+
     def get_queryset(self):
         author = get_object_or_404(User, username=self.kwargs["username"])
         queryset = super().get_queryset().filter(author=author).annotate(
@@ -171,7 +171,7 @@ class CommentCreateView(LoginRequiredMixin, CommentMixin, CreateView):
         form.instance.author = self.request.user
         form.instance.post = post
         return super().form_valid(form)
-    
+
     def get_success_url(self):
         return reverse(POST_DETAIL_URL, kwargs=self.kwargs)
 
