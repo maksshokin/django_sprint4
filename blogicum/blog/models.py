@@ -1,10 +1,8 @@
 from django.db import models
-
-
 from django.contrib.auth import get_user_model
 from django.urls import reverse
 
-from .constants import RESTRICTION
+from blog.constants import POST_DETAIL_URL, RESTRICTION
 
 User = get_user_model()
 
@@ -70,7 +68,8 @@ class Post(PublishedModel):
     author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        verbose_name='Автор публикации'
+        verbose_name='Автор публикации',
+        related_name='post'
     )
     image = models.ImageField(verbose_name='Картинка у публикации', blank=True)
     location = models.ForeignKey(
@@ -95,7 +94,7 @@ class Post(PublishedModel):
         return self.title
 
     def get_absolute_url(self):
-        return reverse('blog:post_detail', args=(self.pk,))
+        return reverse(POST_DETAIL_URL, args=(self.pk,))
 
 
 class Comment(PublishedModel):

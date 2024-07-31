@@ -2,8 +2,8 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect
 
 from blog.models import Comment, Post
-from .forms import CommentForm
-from .constants import INDEX, PAGINATE, POST_DETAIL_URL
+from blog.forms import CommentForm, PostForm
+from blog.constants import INDEX, PAGINATE, POST_DETAIL_URL
 
 from django.core.exceptions import PermissionDenied
 
@@ -21,8 +21,7 @@ class PostFieldsMixin:
         post_to_delete = get_object_or_404(Post, id=kwargs["pk"])
         if request.user.id != post_to_delete.author.id:
             return redirect(POST_DETAIL_URL, pk=post_to_delete.pk)
-        else:
-            return super().dispatch(request, *args, **kwargs)
+        return super().dispatch(request, *args, **kwargs)
 
 
 class CommentMixin:
@@ -57,3 +56,13 @@ class ListingMixin:
     model = Post
     ordering = "-pub_date"
     paginate_by = PAGINATE
+
+
+class PostEditDispatchMixin:
+
+    def dispatch(self, request, *args, **kwargs):
+        if "edit/" in self.request.path:
+            post_to_edit = get_object_or_404(Post, id=kwargs["pk"])
+            if request.user.id != post_to_edit.author.id:
+                return redirect(POST_DETAIL_URL, pk=post_to_edit.pk)
+        return super().dispatch(request, *args, **kwargs)

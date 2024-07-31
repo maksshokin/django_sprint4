@@ -27,7 +27,7 @@ urlpatterns: list = [
         name="edit_post",
     ),
     path(
-        "profile/<username>/",
+        "profile/<str:username>/",
         views.UserProfileView.as_view(),
         name="profile"
     ),
