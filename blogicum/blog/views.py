@@ -12,7 +12,10 @@ from django.views.generic import (
     UpdateView,
 )
 
-from blog.models import Category, Post, User
+from blog.constants import (
+    POST_DETAIL_URL,
+    PROFILE_URL
+)
 from blog.mixins import (
     CommentMixin,
     ListingMixin,
@@ -20,11 +23,8 @@ from blog.mixins import (
     PostFieldsMixin
 )
 from blog.forms import CommentForm, PostForm, UserEditForm
+from blog.models import Category, Post, User
 from blog.utils import CreateUpdateView
-from blog.constants import (
-    POST_DETAIL_URL,
-    PROFILE_URL
-)
 
 
 class PostCreateEditView(
@@ -79,7 +79,7 @@ class CategoryListView(ListingMixin, ListView):
             Category, slug=self.kwargs["category_slug"], is_published=True
         )
         return (
-            queryset.select_related("category")
+            queryset.select_related("category", "author", "location")
             .filter(
                 pub_date__lte=timezone.now(),
                 category=category,
@@ -104,7 +104,7 @@ class UserProfileView(ListingMixin, ListView):
         author = get_object_or_404(User, username=self.kwargs["username"])
         queryset = super().get_queryset().filter(author=author).annotate(
             comment_count=Count('comments')
-        )
+        ).select_related("author")
         if author.id != self.request.user.id:
             queryset = queryset.filter(
                 is_published=True,
@@ -149,24 +149,24 @@ class PostDetailView(DetailView):
         )
         return context
 
-    def get_object(self, queryset=None):
-        post = super().get_object(queryset=queryset)
-        if (
-            post.author != self.request.user
-            and (
-                not post.is_published
-                or not post.category.is_published
-                or post.pub_date > timezone.now()
-            )
-        ):
-            raise Http404()
+    def get_object(self, queryset=None): 
+        post = super().get_object(queryset=queryset) 
+        if ( 
+            post.author != self.request.user 
+            and ( 
+                not post.is_published 
+                or not post.category.is_published 
+                or post.pub_date > timezone.now() 
+            ) 
+        ): 
+            raise Http404() 
         return post
 
 
 class CommentCreateView(LoginRequiredMixin, CommentMixin, CreateView):
     def form_valid(self, form):
         post = get_object_or_404(
-            Post, id=self.kwargs.get("post_id") or self.kwargs["pk"]
+            Post, id=self.kwargs["pk"]
         )
         form.instance.author = self.request.user
         form.instance.post = post

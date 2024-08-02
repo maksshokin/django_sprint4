@@ -1,11 +1,10 @@
+from django.core.exceptions import PermissionDenied
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect
 
-from blog.models import Comment, Post
-from blog.forms import CommentForm
 from blog.constants import INDEX, PAGINATE, POST_DETAIL_URL
-
-from django.core.exceptions import PermissionDenied
+from blog.forms import CommentForm
+from blog.models import Comment, Post
 
 
 class PostFieldsMixin:
@@ -17,19 +16,16 @@ class PostFieldsMixin:
 
 class PostEditDispatchMixin:
 
-    def dispatch(self, request, *args, **kwargs):
-        if "edit/" in self.request.path:
-            post_to_edit = get_object_or_404(Post, id=kwargs["pk"])
-            if request.user.id != post_to_edit.author.id:
-                return redirect(POST_DETAIL_URL, pk=post_to_edit.pk)
-        if "delete/" in self.request.path:
-            return self.check_if_user_is_author(request, *args, **kwargs)
-        return super().dispatch(request, *args, **kwargs)
+    def dispatch(self, request, *args, **kwargs): 
+        if "edit/" or "delete/" in self.request.path: 
+            return self.check_if_user_is_author(request, *args, **kwargs) 
+        return super().dispatch(request, *args, **kwargs) 
 
-    def check_if_user_is_author(self, request, *args, **kwargs):
-        post_to_delete = get_object_or_404(Post, id=kwargs["pk"])
-        if request.user.id != post_to_delete.author.id:
-            return redirect(POST_DETAIL_URL, pk=post_to_delete.pk)
+    def check_if_user_is_author(self, request, *args, **kwargs): 
+        post = self.get_object()
+        if post != None:
+            if request.user.id != post.author.id: 
+                return redirect(POST_DETAIL_URL, pk=post.pk) 
         return super().dispatch(request, *args, **kwargs)
 
 
@@ -43,9 +39,7 @@ class CommentMixin:
 
     def dispatch(self, request, *args, **kwargs):
         if "/comment/" not in self.request.path:
-            comment_to_change = get_object_or_404(
-                Comment, id=self.kwargs["pk"]
-            )
+            comment_to_change = self.get_object()
             if request.user.id != comment_to_change.author.id:
                 raise PermissionDenied
         return super().dispatch(request, *args, **kwargs)

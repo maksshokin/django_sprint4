@@ -1,5 +1,5 @@
-from django.db import models
 from django.contrib.auth import get_user_model
+from django.db import models
 from django.urls import reverse
 
 from blog.constants import POST_DETAIL_URL, RESTRICTION
@@ -69,7 +69,7 @@ class Post(PublishedModel):
         User,
         on_delete=models.CASCADE,
         verbose_name='Автор публикации',
-        related_name='post'
+        related_name='posts'
     )
     image = models.ImageField(verbose_name='Картинка у публикации', blank=True)
     location = models.ForeignKey(
@@ -118,4 +118,10 @@ class Comment(PublishedModel):
         ordering = ('created_at',)
 
     def __str__(self):
-        return self.text[:RESTRICTION]
+        str_text = 'Комментарий автора '
+        str_text += str(self.post.author.username)
+        str_text += ' к посту с id '
+        str_text += str(self.post.pk)
+        str_text += ', текст: '
+        str_text += self.text[:RESTRICTION]
+        return str_text

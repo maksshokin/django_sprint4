@@ -25,9 +25,6 @@ class PostAdmin(admin.ModelAdmin):
     date_hierarchy = "pub_date"
     empty_value_display = "-пусто-"
 
-    def get_queryset(self, request):
-        return super().get_queryset(request)
-
     def get_actions(self, request):
         actions = super().get_actions(request)
         if "delete_selected" in actions:
