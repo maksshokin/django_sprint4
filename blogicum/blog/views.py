@@ -149,17 +149,17 @@ class PostDetailView(DetailView):
         )
         return context
 
-    def get_object(self, queryset=None): 
-        post = super().get_object(queryset=queryset) 
-        if ( 
-            post.author != self.request.user 
-            and ( 
-                not post.is_published 
-                or not post.category.is_published 
-                or post.pub_date > timezone.now() 
-            ) 
-        ): 
-            raise Http404() 
+    def get_object(self, queryset=None):
+        post = super().get_object(queryset=queryset)
+        if (
+            post.author != self.request.user
+            and (
+                not post.is_published
+                or not post.category.is_published
+                or post.pub_date > timezone.now()
+            )
+        ):
+            raise Http404()
         return post
 
 
